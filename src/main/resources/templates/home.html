@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UB Marketplace</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        nav h1 { color: #4f46e5; font-size: 1.25rem; }
+
+        nav div { display: flex; align-items: center; gap: 1rem; }
+
+        nav span { color: #666; font-size: 0.9rem; }
+
+        nav a {
+            background: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        nav button {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+        .page-title {
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .card h3 { font-size: 1rem; color: #1a1a2e; margin-bottom: 0.5rem; }
+
+        .card p { font-size: 0.85rem; color: #666; margin-bottom: 0.75rem; }
+
+        .card .price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .card .meta {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 4rem;
+            grid-column: 1/-1;
+        }
+
+        .empty h2 { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>UB Marketplace</h1>
+        <div>
+            <span id="welcomeMsg"></span>
+            <a href="/post">+ Post Item</a>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Browse Listings</h2>
+        <div class="grid" id="listings"></div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const fullName = localStorage.getItem('fullName');
+
+        if (!token) window.location.href = '/login';
+
+        document.getElementById('welcomeMsg').textContent = 'Hi, ' + fullName;
+
+        async function loadListings() {
+            const response = await fetch('/api/listings', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+
+            const listings = await response.json();
+            const grid = document.getElementById('listings');
+
+            if (listings.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty">
+                        <h2>No listings yet</h2>
+                        <p>Be the first to post an item!</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = listings.map(l => `
+                <div class="card">
+                    <h3>${l.title}</h3>
+                    <p>${l.description || 'No description'}</p>
+                    <div class="price">P ${l.price}</div>
+                    <div class="meta">Posted by ${l.user.fullName}</div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+
+        loadListings();
+    </script>
+</body>
+</html>

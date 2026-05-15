@@ -1,6 +1,9 @@
 package com.ub.marketplace.controller;
 
+import com.ub.marketplace.JwtUtil;
 import com.ub.marketplace.model.Listing;
+import com.ub.marketplace.model.User;
+import com.ub.marketplace.repository.UserRepository;
 import com.ub.marketplace.service.ListingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +15,13 @@ import java.util.List;
 public class ListingController {
 
     private final ListingService listingService;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public ListingController(ListingService listingService) {
+    public ListingController(ListingService listingService, JwtUtil jwtUtil, UserRepository userRepository) {
         this.listingService = listingService;
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -30,8 +37,18 @@ public class ListingController {
     }
 
     @PostMapping
-    public Listing createListing(@RequestBody Listing listing) {
-        return listingService.createListing(listing);
+    public ResponseEntity<?> createListing(
+            @RequestBody Listing listing,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+            User user = userRepository.findByEmail(email).orElseThrow();
+            listing.setUser(user);
+            return ResponseEntity.ok(listingService.createListing(listing));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
     }
 
     @DeleteMapping("/{id}")
