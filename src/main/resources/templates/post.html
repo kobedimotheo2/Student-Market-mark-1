@@ -4,144 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UB Marketplace — Post Item</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --sand: #F5EFE0; --clay: #C4622D; --clay-dark: #A34E22;
+            --bark: #2C1A0E; --cream: #FDFAF4; --stone: #8C7B6B; --warm-border: #E0D4BC;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
-
-        nav {
-            background: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-
-        nav h1 { color: #4f46e5; font-size: 1.25rem; }
-        nav a { color: #4f46e5; text-decoration: none; font-size: 0.9rem; }
-
-        .container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-
-        h2 { margin-bottom: 1.5rem; color: #1a1a2e; }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.25rem;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            outline: none;
-            font-family: inherit;
-            transition: border 0.2s;
-        }
-
-        input:focus, textarea:focus, select:focus { border-color: #4f46e5; }
-
-        textarea { height: 100px; resize: vertical; }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:hover { background: #4338ca; }
-
-        .success {
-            color: #16a34a;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .error {
-            color: #dc2626;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--sand); min-height: 100vh; }
+        nav { background: var(--bark); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; height: 64px; }
+        .nav-brand { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--cream); text-decoration: none; }
+        .nav-brand span { color: var(--clay); font-style: italic; }
+        .nav-back { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.875rem; transition: color 0.15s; }
+        .nav-back:hover { color: white; }
+        .container { max-width: 580px; margin: 3rem auto; padding: 0 1rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--bark); margin-bottom: 0.4rem; }
+        .page-header p { color: var(--stone); font-size: 0.9rem; }
+        .card { background: var(--cream); border: 1.5px solid var(--warm-border); border-radius: 16px; padding: 2rem; }
+        .field { margin-bottom: 1.25rem; }
+        label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--bark); margin-bottom: 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--warm-border); border-radius: 10px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; background: white; color: var(--bark); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+        input:focus, textarea:focus, select:focus { border-color: var(--clay); box-shadow: 0 0 0 3px rgba(196,98,45,0.1); }
+        input::placeholder, textarea::placeholder { color: #b8a898; }
+        textarea { height: 110px; resize: vertical; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .price-wrap { position: relative; }
+        .price-prefix { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-weight: 600; color: var(--stone); pointer-events: none; }
+        .price-wrap input { padding-left: 2.2rem; }
+        .hint { font-size: 0.75rem; color: var(--stone); margin-top: 0.3rem; }
+        .btn { width: 100%; padding: 1rem; background: var(--clay); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 0.5rem; }
+        .btn:hover { background: var(--clay-dark); }
+        .btn:active { transform: scale(0.99); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .success-msg { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; font-size: 0.875rem; padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.25rem; display: none; justify-content: space-between; align-items: center; }
+        .success-msg a { color: #166534; font-weight: 600; }
+        .error-msg { background: #fef2f2; border: 1.5px solid #fecaca; color: #dc2626; font-size: 0.875rem; padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.25rem; display: none; }
     </style>
 </head>
 <body>
     <nav>
-        <h1>UB Marketplace</h1>
-        <a href="/home">← Back to listings</a>
+        <a class="nav-brand" href="/home">UB <span>Market</span></a>
+        <a class="nav-back" href="/home">← Back to listings</a>
     </nav>
-
     <div class="container">
+        <div class="page-header">
+            <h1>Post an item</h1>
+            <p>Fill in the details and your listing goes live instantly.</p>
+        </div>
         <div class="card">
-            <h2>Post an Item</h2>
-
-            <p class="success" id="success">Item posted successfully!</p>
-            <p class="error" id="error"></p>
-
-            <label>Title</label>
-            <input type="text" id="title" placeholder="e.g. Calculus Textbook" />
-
-            <label>Description</label>
-            <textarea id="description" placeholder="Describe your item..."></textarea>
-
-            <label>Price (Pula)</label>
-            <input type="number" id="price" placeholder="e.g. 150" />
-
-            <button onclick="postItem()">Post Item</button>
+            <div class="success-msg" id="success">✓ Item posted! <a href="/home">View listings →</a></div>
+            <div class="error-msg" id="error"></div>
+            <div class="field">
+                <label>Title</label>
+                <input type="text" id="title" placeholder="e.g. Calculus Textbook 3rd Edition" />
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <textarea id="description" placeholder="Describe the condition, what's included, any defects..."></textarea>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="">Select category</option>
+                        <option value="Books">📚 Books</option>
+                        <option value="Electronics">💻 Electronics</option>
+                        <option value="Clothing">👕 Clothing</option>
+                        <option value="Furniture">🪑 Furniture</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Price (Pula)</label>
+                    <div class="price-wrap">
+                        <span class="price-prefix">P</span>
+                        <input type="number" id="price" placeholder="0.00" min="0" step="0.01" />
+                    </div>
+                    <p class="hint">Set to 0 for free items</p>
+                </div>
+            </div>
+            <button class="btn" id="submitBtn" onclick="postItem()">Post Listing</button>
         </div>
     </div>
-
     <script>
         const token = localStorage.getItem('token');
         if (!token) window.location.href = '/login';
 
         async function postItem() {
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
             const price = document.getElementById('price').value;
+            const categoryName = document.getElementById('category').value;
             const error = document.getElementById('error');
             const success = document.getElementById('success');
+            const btn = document.getElementById('submitBtn');
+
+            error.style.display = 'none';
+            success.style.display = 'none';
+
+            if (!title) { error.style.display = 'block'; error.textContent = 'Please enter a title.'; return; }
+            if (price === '' || Number(price) < 0) { error.style.display = 'block'; error.textContent = 'Please enter a valid price.'; return; }
+
+            btn.disabled = true; btn.textContent = 'Posting...';
+            const body = { title, description, price: Number(price) };
+            if (categoryName) body.category = { name: categoryName };
 
             const response = await fetch('/api/listings', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({ title, description, price })
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify(body)
             });
 
+            btn.disabled = false; btn.textContent = 'Post Listing';
+
             if (response.ok) {
-                success.style.display = 'block';
-                error.style.display = 'none';
+                success.style.display = 'flex';
                 document.getElementById('title').value = '';
                 document.getElementById('description').value = '';
                 document.getElementById('price').value = '';
+                document.getElementById('category').value = '';
             } else {
                 error.style.display = 'block';
                 error.textContent = 'Failed to post item. Please try again.';

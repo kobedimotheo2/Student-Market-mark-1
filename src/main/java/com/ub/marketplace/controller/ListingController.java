@@ -31,6 +31,18 @@ public class ListingController {
         return listingService.searchListings(search, category);
     }
 
+    @GetMapping("/mine")
+    public ResponseEntity<?> getMyListings(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+            User user = userRepository.findByEmail(email).orElseThrow();
+            return ResponseEntity.ok(listingService.getListingsByUser(user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Listing> getListingById(@PathVariable Long id) {
         Listing listing = listingService.getListingById(id);
@@ -54,8 +66,24 @@ public class ListingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
-        listingService.deleteListing(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteListing(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+            User user = userRepository.findByEmail(email).orElseThrow();
+
+            Listing listing = listingService.getListingById(id);
+            if (listing == null) return ResponseEntity.notFound().build();
+            if (!listing.getUser().getId().equals(user.getId())) {
+                return ResponseEntity.status(403).body("You can only delete your own listings");
+            }
+
+            listingService.deleteListing(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
     }
 }

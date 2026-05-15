@@ -17,4 +17,6 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
            "l.status = 'available'")
     List<Listing> searchListings(@Param("search") String search,
                                   @Param("category") String category);
+
+    List<Listing> findByUserId(Long userId);
 }

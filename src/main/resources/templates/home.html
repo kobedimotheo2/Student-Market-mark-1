@@ -4,119 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UB Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --sand: #F5EFE0; --clay: #C4622D; --clay-dark: #A34E22;
+            --bark: #2C1A0E; --moss: #4A5E3A; --cream: #FDFAF4;
+            --stone: #8C7B6B; --warm-border: #E0D4BC;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
-        nav {
-            background: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-        nav h1 { color: #4f46e5; font-size: 1.25rem; }
-        nav div { display: flex; align-items: center; gap: 1rem; }
-        nav span { color: #666; font-size: 0.9rem; }
-        nav a {
-            background: #4f46e5;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        nav button {
-            background: none;
-            border: 1px solid #ddd;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-        .filters {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .filters input {
-            flex: 1;
-            padding: 0.65rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            outline: none;
-            min-width: 200px;
-        }
-        .filters input:focus { border-color: #4f46e5; }
-        .filters select {
-            padding: 0.65rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            outline: none;
-            background: white;
-            cursor: pointer;
-        }
-        .filters button {
-            padding: 0.65rem 1.25rem;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.25rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        .card h3 { font-size: 1rem; color: #1a1a2e; margin-bottom: 0.5rem; }
-        .card p { font-size: 0.85rem; color: #666; margin-bottom: 0.75rem; }
-        .card .price { font-size: 1.1rem; font-weight: 700; color: #4f46e5; }
-        .card .meta { font-size: 0.75rem; color: #999; margin-top: 0.5rem; }
-        .badge {
-            display: inline-block;
-            background: #eef2ff;
-            color: #4f46e5;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-bottom: 0.5rem;
-        }
-        .empty {
-            text-align: center;
-            color: #999;
-            padding: 4rem;
-            grid-column: 1/-1;
-        }
-        .empty h2 { margin-bottom: 0.5rem; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--sand); min-height: 100vh; }
+        nav { background: var(--bark); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--cream); text-decoration: none; }
+        .nav-brand span { color: var(--clay); font-style: italic; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-welcome { color: var(--stone); font-size: 0.875rem; }
+        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.875rem; padding: 0.4rem 0.75rem; border-radius: 6px; transition: color 0.15s; }
+        .nav-link:hover { color: white; }
+        .nav-btn { background: var(--clay); color: white; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+        .nav-btn:hover { background: var(--clay-dark); }
+        .nav-ghost { background: transparent; color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+        .nav-ghost:hover { border-color: rgba(255,255,255,0.5); color: white; }
+        .hero { background: var(--bark); padding: 3rem 2rem 2.5rem; text-align: center; }
+        .hero h1 { font-family: 'Fraunces', serif; font-size: 2.8rem; color: var(--cream); line-height: 1.1; margin-bottom: 0.75rem; }
+        .hero h1 em { font-style: italic; color: var(--clay); }
+        .hero p { color: var(--stone); font-size: 1rem; margin-bottom: 2rem; }
+        .search-bar { max-width: 680px; margin: 0 auto; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .search-bar input { flex: 1; min-width: 200px; padding: 0.85rem 1.1rem; border: 1.5px solid var(--warm-border); border-radius: 10px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--bark); outline: none; transition: border-color 0.2s; }
+        .search-bar input:focus { border-color: var(--clay); }
+        .search-bar select { padding: 0.85rem 1rem; border: 1.5px solid var(--warm-border); border-radius: 10px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--bark); outline: none; cursor: pointer; }
+        .search-bar button { padding: 0.85rem 1.5rem; background: var(--clay); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; }
+        .search-bar button:hover { background: var(--clay-dark); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .section-header h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--bark); }
+        .section-header span { font-size: 0.85rem; color: var(--stone); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; }
+        .card { background: var(--cream); border-radius: 14px; padding: 1.25rem; border: 1.5px solid var(--warm-border); transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(44,26,14,0.1); }
+        .badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .badge-books { background: #fef3c7; color: #92400e; }
+        .badge-electronics { background: #dbeafe; color: #1e40af; }
+        .badge-clothing { background: #fce7f3; color: #9d174d; }
+        .badge-furniture { background: #d1fae5; color: #065f46; }
+        .badge-other { background: #f3f4f6; color: #374151; }
+        .card h3 { font-size: 1rem; color: var(--bark); margin-bottom: 0.4rem; line-height: 1.35; }
+        .card p { font-size: 0.85rem; color: var(--stone); margin-bottom: 0.75rem; line-height: 1.5; }
+        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+        .price { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: var(--clay); }
+        .meta { font-size: 0.75rem; color: var(--stone); }
+        .empty { grid-column: 1/-1; text-align: center; padding: 5rem 1rem; color: var(--stone); }
+        .empty h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--bark); margin-bottom: 0.5rem; }
+        @media (max-width: 600px) { .hero h1 { font-size: 2rem; } .nav-welcome { display: none; } }
     </style>
 </head>
 <body>
     <nav>
-        <h1>UB Marketplace</h1>
-        <div>
-            <span id="welcomeMsg"></span>
-            <a href="/post">+ Post Item</a>
-            <button onclick="logout()">Logout</button>
+        <a class="nav-brand" href="/home">UB <span>Market</span></a>
+        <div class="nav-right">
+            <span class="nav-welcome" id="welcomeMsg"></span>
+            <a class="nav-link" href="/my-listings">My Listings</a>
+            <a class="nav-btn" href="/post">+ Post Item</a>
+            <button class="nav-ghost" onclick="logout()">Logout</button>
         </div>
     </nav>
-
-    <div class="container">
-        <div class="filters">
+    <div class="hero">
+        <h1>Campus <em>Marketplace</em></h1>
+        <p>Find great deals from fellow UB students</p>
+        <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search listings..." />
             <select id="categorySelect">
                 <option value="">All Categories</option>
@@ -128,59 +82,55 @@
             </select>
             <button onclick="loadListings()">Search</button>
         </div>
+    </div>
+    <div class="container">
+        <div class="section-header">
+            <h2>Recent Listings</h2>
+            <span id="listingCount"></span>
+        </div>
         <div class="grid" id="listings"></div>
     </div>
-
     <script>
         const token = localStorage.getItem('token');
         const fullName = localStorage.getItem('fullName');
         if (!token) window.location.href = '/login';
-        document.getElementById('welcomeMsg').textContent = 'Hi, ' + fullName;
+        document.getElementById('welcomeMsg').textContent = 'Hi, ' + (fullName || '');
+
+        const badgeClass = { Books:'badge-books', Electronics:'badge-electronics', Clothing:'badge-clothing', Furniture:'badge-furniture', Other:'badge-other' };
 
         async function loadListings() {
             const search = document.getElementById('searchInput').value;
             const category = document.getElementById('categorySelect').value;
-
             let url = '/api/listings?';
             if (search) url += `search=${encodeURIComponent(search)}&`;
             if (category) url += `category=${encodeURIComponent(category)}`;
-
-            const response = await fetch(url, {
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
-
+            const response = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
             const listings = await response.json();
             const grid = document.getElementById('listings');
-
+            const count = document.getElementById('listingCount');
             if (listings.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty">
-                        <h2>No listings found</h2>
-                        <p>Try a different search or be the first to post!</p>
-                    </div>`;
+                count.textContent = '';
+                grid.innerHTML = `<div class="empty"><h2>No listings found</h2><p>Try a different search or be the first to post!</p></div>`;
                 return;
             }
-
-            grid.innerHTML = listings.map(l => `
-                <div class="card">
-                    ${l.category ? `<span class="badge">${l.category.name}</span>` : ''}
+            count.textContent = listings.length + ' item' + (listings.length !== 1 ? 's' : '');
+            grid.innerHTML = listings.map(l => {
+                const cat = l.category ? l.category.name : null;
+                const bc = cat ? (badgeClass[cat] || 'badge-other') : '';
+                return `<div class="card">
+                    ${cat ? `<span class="badge ${bc}">${cat}</span>` : ''}
                     <h3>${l.title}</h3>
-                    <p>${l.description || 'No description'}</p>
-                    <div class="price">P ${l.price}</div>
-                    <div class="meta">Posted by ${l.user.fullName}</div>
-                </div>
-            `).join('');
+                    <p>${l.description || 'No description provided.'}</p>
+                    <div class="card-footer">
+                        <div class="price">P ${Number(l.price).toFixed(2)}</div>
+                        <div class="meta">${l.user.fullName}</div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = '/login';
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') loadListings();
-        });
-
+        function logout() { localStorage.clear(); window.location.href = '/login'; }
+        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') loadListings(); });
         loadListings();
     </script>
 </body>

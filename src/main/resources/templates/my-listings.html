@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UB Marketplace — My Listings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sand: #F5EFE0; --clay: #C4622D; --clay-dark: #A34E22;
+            --bark: #2C1A0E; --cream: #FDFAF4; --stone: #8C7B6B; --warm-border: #E0D4BC;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--sand); min-height: 100vh; }
+        nav { background: var(--bark); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--cream); text-decoration: none; }
+        .nav-brand span { color: var(--clay); font-style: italic; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.875rem; padding: 0.4rem 0.75rem; border-radius: 6px; transition: color 0.15s; }
+        .nav-link:hover { color: white; }
+        .nav-btn { background: var(--clay); color: white; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+        .nav-btn:hover { background: var(--clay-dark); }
+        .nav-ghost { background: transparent; color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+        .nav-ghost:hover { border-color: rgba(255,255,255,0.5); color: white; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--bark); }
+        .page-header p { color: var(--stone); font-size: 0.9rem; margin-top: 0.25rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; }
+        .card { background: var(--cream); border: 1.5px solid var(--warm-border); border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(44,26,14,0.08); }
+        .badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .badge-books { background: #fef3c7; color: #92400e; }
+        .badge-electronics { background: #dbeafe; color: #1e40af; }
+        .badge-clothing { background: #fce7f3; color: #9d174d; }
+        .badge-furniture { background: #d1fae5; color: #065f46; }
+        .badge-other { background: #f3f4f6; color: #374151; }
+        .card h3 { font-size: 1rem; color: var(--bark); margin-bottom: 0.4rem; line-height: 1.35; }
+        .card p { font-size: 0.85rem; color: var(--stone); line-height: 1.5; flex: 1; margin-bottom: 1rem; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .price { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: var(--clay); }
+        .meta { font-size: 0.75rem; color: var(--stone); }
+        .delete-btn { margin-top: 1rem; width: 100%; padding: 0.6rem; background: transparent; color: #b91c1c; border: 1.5px solid #fecaca; border-radius: 8px; font-size: 0.85rem; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+        .delete-btn:hover { background: #fef2f2; border-color: #f87171; }
+        .empty { grid-column: 1/-1; text-align: center; padding: 5rem 1rem; }
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--bark); margin-bottom: 0.5rem; }
+        .empty p { color: var(--stone); margin-bottom: 1.5rem; }
+        .empty a { display: inline-block; background: var(--clay); color: white; padding: 0.75rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.15s; }
+        .empty a:hover { background: var(--clay-dark); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a class="nav-brand" href="/home">UB <span>Market</span></a>
+        <div class="nav-right">
+            <a class="nav-link" href="/home">All Listings</a>
+            <a class="nav-btn" href="/post">+ Post Item</a>
+            <button class="nav-ghost" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>My Listings</h1>
+            <p id="listingCount"></p>
+        </div>
+        <div class="grid" id="listings"></div>
+    </div>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+
+        const badgeClass = { Books:'badge-books', Electronics:'badge-electronics', Clothing:'badge-clothing', Furniture:'badge-furniture', Other:'badge-other' };
+
+        async function loadMyListings() {
+            const response = await fetch('/api/listings/mine', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            const listings = await response.json();
+            const grid = document.getElementById('listings');
+            const count = document.getElementById('listingCount');
+
+            if (!listings.length) {
+                count.textContent = '';
+                grid.innerHTML = `<div class="empty">
+                    <div class="empty-icon">📭</div>
+                    <h2>Nothing posted yet</h2>
+                    <p>Your listings will appear here once you post something.</p>
+                    <a href="/post">Post your first item</a>
+                </div>`;
+                return;
+            }
+
+            count.textContent = listings.length + ' active listing' + (listings.length !== 1 ? 's' : '');
+            grid.innerHTML = listings.map(l => {
+                const cat = l.category ? l.category.name : null;
+                const bc = cat ? (badgeClass[cat] || 'badge-other') : '';
+                const date = new Date(l.createdAt).toLocaleDateString('en-BW', { day:'numeric', month:'short', year:'numeric' });
+                return `<div class="card" id="card-${l.id}">
+                    ${cat ? `<span class="badge ${bc}">${cat}</span>` : ''}
+                    <h3>${l.title}</h3>
+                    <p>${l.description || 'No description provided.'}</p>
+                    <div class="card-footer">
+                        <div class="price">P ${Number(l.price).toFixed(2)}</div>
+                        <div class="meta">${date}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteListing(${l.id})">Remove listing</button>
+                </div>`;
+            }).join('');
+        }
+
+        async function deleteListing(id) {
+            if (!confirm('Remove this listing? This cannot be undone.')) return;
+            const response = await fetch('/api/listings/' + id, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (response.status === 204) {
+                const card = document.getElementById('card-' + id);
+                card.style.transition = 'all 0.2s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => { card.remove(); loadMyListings(); }, 200);
+            } else {
+                alert('Could not remove listing. Please try again.');
+            }
+        }
+
+        function logout() { localStorage.clear(); window.location.href = '/login'; }
+        loadMyListings();
+    </script>
+</body>
+</html>

@@ -20,7 +20,13 @@ public class ListingService {
     }
 
     public List<Listing> searchListings(String search, String category) {
-        return listingRepository.searchListings(search, category);
+        String cleanSearch = (search == null || search.isBlank()) ? null : search;
+        String cleanCategory = (category == null || category.isBlank()) ? null : category;
+        return listingRepository.searchListings(cleanSearch, cleanCategory);
+    }
+
+    public List<Listing> getListingsByUser(Long userId) {
+        return listingRepository.findByUserId(userId);
     }
 
     public Listing getListingById(Long id) {
