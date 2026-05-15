@@ -25,8 +25,10 @@ public class ListingController {
     }
 
     @GetMapping
-    public List<Listing> getAllListings() {
-        return listingService.getAllListings();
+    public List<Listing> getAllListings(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category) {
+        return listingService.searchListings(search, category);
     }
 
     @GetMapping("/{id}")

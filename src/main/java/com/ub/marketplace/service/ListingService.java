@@ -16,7 +16,11 @@ public class ListingService {
     }
 
     public List<Listing> getAllListings() {
-        return listingRepository.findAll();
+        return listingRepository.searchListings(null, null);
+    }
+
+    public List<Listing> searchListings(String search, String category) {
+        return listingRepository.searchListings(search, category);
     }
 
     public Listing getListingById(Long id) {

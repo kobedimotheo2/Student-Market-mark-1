@@ -6,9 +6,7 @@
     <title>UB Marketplace</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
-
         nav {
             background: white;
             padding: 1rem 2rem;
@@ -17,13 +15,9 @@
             align-items: center;
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
-
         nav h1 { color: #4f46e5; font-size: 1.25rem; }
-
         nav div { display: flex; align-items: center; gap: 1rem; }
-
         nav span { color: #666; font-size: 0.9rem; }
-
         nav a {
             background: #4f46e5;
             color: white;
@@ -33,7 +27,6 @@
             font-size: 0.9rem;
             font-weight: 600;
         }
-
         nav button {
             background: none;
             border: 1px solid #ddd;
@@ -43,51 +36,72 @@
             font-size: 0.9rem;
             color: #666;
         }
-
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-
-        .page-title {
-            font-size: 1.5rem;
-            color: #1a1a2e;
+        .filters {
+            display: flex;
+            gap: 1rem;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
-
+        .filters input {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            min-width: 200px;
+        }
+        .filters input:focus { border-color: #4f46e5; }
+        .filters select {
+            padding: 0.65rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            background: white;
+            cursor: pointer;
+        }
+        .filters button {
+            padding: 0.65rem 1.25rem;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.5rem;
         }
-
         .card {
             background: white;
             border-radius: 12px;
             padding: 1.25rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.07);
         }
-
         .card h3 { font-size: 1rem; color: #1a1a2e; margin-bottom: 0.5rem; }
-
         .card p { font-size: 0.85rem; color: #666; margin-bottom: 0.75rem; }
-
-        .card .price {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .card .price { font-size: 1.1rem; font-weight: 700; color: #4f46e5; }
+        .card .meta { font-size: 0.75rem; color: #999; margin-top: 0.5rem; }
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
             color: #4f46e5;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-bottom: 0.5rem;
         }
-
-        .card .meta {
-            font-size: 0.75rem;
-            color: #999;
-            margin-top: 0.5rem;
-        }
-
         .empty {
             text-align: center;
             color: #999;
             padding: 4rem;
             grid-column: 1/-1;
         }
-
         .empty h2 { margin-bottom: 0.5rem; }
     </style>
 </head>
@@ -102,20 +116,36 @@
     </nav>
 
     <div class="container">
-        <h2 class="page-title">Browse Listings</h2>
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search listings..." />
+            <select id="categorySelect">
+                <option value="">All Categories</option>
+                <option value="Books">Books</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Other">Other</option>
+            </select>
+            <button onclick="loadListings()">Search</button>
+        </div>
         <div class="grid" id="listings"></div>
     </div>
 
     <script>
         const token = localStorage.getItem('token');
         const fullName = localStorage.getItem('fullName');
-
         if (!token) window.location.href = '/login';
-
         document.getElementById('welcomeMsg').textContent = 'Hi, ' + fullName;
 
         async function loadListings() {
-            const response = await fetch('/api/listings', {
+            const search = document.getElementById('searchInput').value;
+            const category = document.getElementById('categorySelect').value;
+
+            let url = '/api/listings?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (category) url += `category=${encodeURIComponent(category)}`;
+
+            const response = await fetch(url, {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
 
@@ -125,14 +155,15 @@
             if (listings.length === 0) {
                 grid.innerHTML = `
                     <div class="empty">
-                        <h2>No listings yet</h2>
-                        <p>Be the first to post an item!</p>
+                        <h2>No listings found</h2>
+                        <p>Try a different search or be the first to post!</p>
                     </div>`;
                 return;
             }
 
             grid.innerHTML = listings.map(l => `
                 <div class="card">
+                    ${l.category ? `<span class="badge">${l.category.name}</span>` : ''}
                     <h3>${l.title}</h3>
                     <p>${l.description || 'No description'}</p>
                     <div class="price">P ${l.price}</div>
@@ -145,6 +176,10 @@
             localStorage.clear();
             window.location.href = '/login';
         }
+
+        document.getElementById('searchInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') loadListings();
+        });
 
         loadListings();
     </script>
